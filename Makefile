@@ -5,7 +5,7 @@ sync:  .repo/manifest.xml
 	./bin/repo sync -j3
 
 .repo/manifest.xml: bin/repo
-	./bin/repo init -u . -m manifests/default.xml
+	./bin/repo init -u . -m manifests/default.xml -b $(shell git rev-parse --abbrev-ref HEAD)
 
 bin/repo:
 	wget https://storage.googleapis.com/git-repo-downloads/repo -O bin/repo
