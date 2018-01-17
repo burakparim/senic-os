@@ -29,7 +29,7 @@ else
 	echo " No SSIDS found"	
 fi
 
-# Look for SSID details in environment variabls
+# Look for SSID details in environment variables
 if [ -n "$SSID_NAME" ]; then
     while IFS=':': read -r name interface status ssid;
     do
@@ -38,6 +38,12 @@ if [ -n "$SSID_NAME" ]; then
         else
             echo " Connecting $name to $SSID_NAME..."
             nmcli dev wifi con $SSID_NAME password $SSID_PASSWORD ifname $name
+            result=$(nmcli -t dev | grep wlp3s0 | awk -F':' '{print $3}')
+            if [ "$result" == "connected" ]; then
+                echo " Interface: $name is now connected to $ssid"
+            else
+                echo " Failed to connect Interface: $name to $ssid"
+            fi
         fi
     done < <(nmcli -t dev | grep 'wifi')
     result=$(nmcli dev | grep "ethernet" | grep -w "connected")
