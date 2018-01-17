@@ -39,14 +39,21 @@ if [ -n "$SSID_NAME" ]; then
             echo " Connecting $name to $SSID_NAME..."
             # nmcli command to connect to network
             nmcli dev wifi con $SSID_NAME password $SSID_PASSWORD ifname $name
-            result=$(nmcli -t dev | grep wlp3s0 | awk -F':' '{print $3}')
-            if [ "$result" == "connected" ]; then
-                echo " Interface: $name is now connected to $ssid"
-                con_name=$(nmcli -t dev | grep wlp3s0 | awk -F':' '{print $4}')
+            updated_status=$(nmcli -t dev | grep $name | awk -F':' '{print $3}')
+            if [ "$updated_status" == "connected" ]; then
+                connection_name=$(nmcli -t dev | grep $name | awk -F':' '{print $4}')
+                echo " Interface: $name is now connected to $SSID_NAME"
+                # logic to send data using interface
+                ping -q -I $name -c5 google.com > /dev/null
+                if [ $? -eq 0 ]; then
+                    echo " Successfully sent data using interface $name"
+                else
+                    echo " Failed to send data using interface $name"
+                fi
                 # nmcli command to close down a connection.
-                nmcli con down id $con_name
-                result=$(nmcli -t dev | grep wlp3s0 | awk -F':' '{print $3}')
-                if [ "$result" == "disconnected" ]; then
+                nmcli con down id "$connection_name"
+                disconnect_status=$(nmcli -t dev | grep $name | awk -F':' '{print $3}')
+                if [ "$disconnect_status" == "disconnected" ]; then
                     echo " Closed connection for: $name"
                 else
                     echo " Failed to close connection for: $name"
@@ -56,7 +63,6 @@ if [ -n "$SSID_NAME" ]; then
             fi
         fi
     done < <(nmcli -t dev | grep 'wifi')
-    result=$(nmcli dev | grep "ethernet" | grep -w "connected")
 else
     echo " Please set SSID_NAME and SSID_PASSWORD environment variables"
 fi
