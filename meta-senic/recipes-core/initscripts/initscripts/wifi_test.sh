@@ -37,10 +37,20 @@ if [ -n "$SSID_NAME" ]; then
             echo " Interface: $name is already connected to $ssid";
         else
             echo " Connecting $name to $SSID_NAME..."
+            # nmcli command to connect to network
             nmcli dev wifi con $SSID_NAME password $SSID_PASSWORD ifname $name
             result=$(nmcli -t dev | grep wlp3s0 | awk -F':' '{print $3}')
             if [ "$result" == "connected" ]; then
                 echo " Interface: $name is now connected to $ssid"
+                con_name=$(nmcli -t dev | grep wlp3s0 | awk -F':' '{print $4}')
+                # nmcli command to close down a connection.
+                nmcli con down id $con_name
+                result=$(nmcli -t dev | grep wlp3s0 | awk -F':' '{print $3}')
+                if [ "$result" == "disconnected" ]; then
+                    echo " Closed connection for: $name"
+                else
+                    echo " Failed to close connection for: $name"
+                fi
             else
                 echo " Failed to connect Interface: $name to $ssid"
             fi
