@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 USB_LIST="$(usb-devices)"
 IS_WLAN="$(echo "$USB_LIST" | grep -iE 'mt7601u' | wc -l)"
 
@@ -12,7 +12,11 @@ fi
 # Check wifi interfaces using nmcli
 WIFI_INTERFACES="$(nmcli -t device show | grep wifi | wc -l)"
 if [ $WIFI_INTERFACES -gt 0 ]; then
-	echo " wifi interfaces are available"	
+	echo " wifi interfaces are available";
+    while IFS=':': read -r name interface status ssid;
+    do
+        echo " Name of interface: $name";
+    done < <(nmcli -t dev | grep 'wifi')
 else
 	echo " wifi interface is missing"	
 fi
@@ -23,4 +27,20 @@ if [ $SCANNED_SSIDS -gt 0 ]; then
 	echo " Successfully scanned $SCANNED_SSIDS networks"	
 else
 	echo " No SSIDS found"	
+fi
+
+# Look for SSID details in environment variabls
+if [ -n "$SSID_NAME" ]; then
+    while IFS=':': read -r name interface status ssid;
+    do
+        if [ "$status" == "connected" ]; then
+            echo " Interface: $name is already connected to $ssid";
+        else
+            echo " Connecting $name to $SSID_NAME..."
+            nmcli dev wifi con $SSID_NAME password $SSID_PASSWORD ifname $name
+        fi
+    done < <(nmcli -t dev | grep 'wifi')
+    result=$(nmcli dev | grep "ethernet" | grep -w "connected")
+else
+    echo " Please set SSID_NAME and SSID_PASSWORD environment variables"
 fi
