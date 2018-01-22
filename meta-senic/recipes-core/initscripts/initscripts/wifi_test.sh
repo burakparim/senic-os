@@ -10,19 +10,19 @@ else
 fi
 
 # Check wifi interfaces using nmcli
-WIFI_INTERFACES="$(nmcli -t device show | grep wifi | wc -l)"
+WIFI_INTERFACES="$(nmcli -t -f common device show | grep wifi | wc -l)"
 if [ $WIFI_INTERFACES -gt 0 ]; then
 	echo " wifi interfaces are available";
     while IFS=':': read -r name interface status ssid;
     do
         echo " Name of interface: $name";
-    done < <(nmcli -t dev | grep 'wifi')
+    done < <(nmcli -t -f common dev | grep 'wifi')
 else
 	echo " wifi interface is missing"	
 fi
 
 # Confirm that we are able to scan available networks
-SCANNED_SSIDS="$(nmcli -t dev wifi list | wc -l)"
+SCANNED_SSIDS="$(nmcli -t -f common dev wifi list | wc -l)"
 if [ $SCANNED_SSIDS -gt 0 ]; then
 	echo " Successfully scanned $SCANNED_SSIDS networks"	
 else
@@ -39,9 +39,9 @@ if [ -n "$SSID_NAME" ]; then
             echo " Connecting $name to $SSID_NAME..."
             # nmcli command to connect to network
             nmcli dev wifi con $SSID_NAME password $SSID_PASSWORD ifname $name
-            updated_status=$(nmcli -t dev | grep $name | awk -F':' '{print $3}')
+            updated_status=$(nmcli -t -f common dev | grep $name | awk -F':' '{print $3}')
             if [ "$updated_status" == "connected" ]; then
-                connection_name=$(nmcli -t dev | grep $name | awk -F':' '{print $4}')
+                connection_name=$(nmcli -t -f common dev | grep $name | awk -F':' '{print $4}')
                 echo " Interface: $name is now connected to $SSID_NAME"
                 # logic to send data using interface
                 ping -q -I $name -c5 google.com > /dev/null
@@ -52,7 +52,7 @@ if [ -n "$SSID_NAME" ]; then
                 fi
                 # nmcli command to close down a connection.
                 nmcli con down id "$connection_name"
-                disconnect_status=$(nmcli -t dev | grep $name | awk -F':' '{print $3}')
+                disconnect_status=$(nmcli -t -f common dev | grep $name | awk -F':' '{print $3}')
                 if [ "$disconnect_status" == "disconnected" ]; then
                     echo " Closed connection for: $name"
                 else
@@ -62,7 +62,7 @@ if [ -n "$SSID_NAME" ]; then
                 echo " Failed to connect Interface: $name to $ssid"
             fi
         fi
-    done < <(nmcli -t dev | grep 'wifi')
+    done < <(nmcli -t -f common dev | grep 'wifi')
 else
     echo " Please set SSID_NAME and SSID_PASSWORD environment variables"
 fi
