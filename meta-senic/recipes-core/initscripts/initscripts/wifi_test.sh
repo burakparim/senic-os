@@ -16,7 +16,7 @@ if [ $WIFI_INTERFACES -gt 0 ]; then
     while IFS=':': read -r name interface status ssid;
     do
         echo " Name of interface: $name";
-    done < <(nmcli -t -f type dev | grep 'wifi')
+    done < <(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep 'wifi')
 else
 	echo " wifi interface is missing"	
 fi
