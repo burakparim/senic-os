@@ -13,6 +13,17 @@ while IFS='': read line; do
     echo " Found device named: $name with mac address: $mac"
     # To connect to the device
     hcitool -i hci0 cc $mac 2>&1
-    echo `hcitool con`
+    if [ "$(hcitool con | grep $mac | wc -l)" -gt 0 ]; then
+        echo " Successfully established Bluetooth connection with $name"
+    else
+        echo " Failed to connect to $name"
+    fi
+    echo `hcitool rssi $mac`
+    # Disconnecting from the device
     hcitool -i hci0 dc $mac 2>&1
+    if [ "$(hcitool con | grep $mac | wc -l)" -eq 0 ]; then
+        echo " Successfully disconnected with $name"
+    else
+        echo " Failed to disconnect to $name"
+    fi
     done < <(hcitool -i hci0 scan | sed -n '1!p')
