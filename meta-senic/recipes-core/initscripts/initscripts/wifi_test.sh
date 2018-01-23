@@ -38,7 +38,7 @@ if [ -n "$SSID_NAME" ]; then
         else
             echo " Connecting $name to $SSID_NAME..."
             # nmcli command to connect to network
-            nmcli dev wifi con $SSID_NAME password $SSID_PASSWORD ifname $name
+            nmcli dev wifi con "$SSID_NAME" password "$SSID_PASSWORD" ifname $name
             updated_status=$(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep $name | awk -F':' '{print $3}')
             if [ "$updated_status" == "connected" ]; then
                 connection_name=$(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep $name | awk -F':' '{print $4}')
