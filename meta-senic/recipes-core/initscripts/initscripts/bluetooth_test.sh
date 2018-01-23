@@ -9,7 +9,7 @@ fi
 
 while IFS='': read line; do
     mac=$(echo $line | cut -d' ' -f1)
-    name=$(echo $line | cut -d' ' -f2)
+    name=$(echo $line | cut -d' ' -f2-)
     echo " Found device named: $name with mac address: $mac"
     # To connect to the device
     hcitool -i hci0 cc $mac 2>&1
