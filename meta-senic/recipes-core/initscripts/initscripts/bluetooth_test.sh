@@ -1,5 +1,5 @@
 #!/bin/bash
-BLE_DEVICES="$(hcitool dev | sed -n '1!p' | wc -l)"
+BLE_DEVICES="$(hciconfig dev | grep Type | wc -l)"
 if [ $BLE_DEVICES -gt 0 ]; then
     echo " $BLE_DEVICES Bluetooth device(s) found"
 else
@@ -10,6 +10,10 @@ fi
 while IFS='': read interface_line; do
     interface=$(echo $interface_line | cut -d' ' -f1)
     echo " Scanning using $interface interface"
+    status=$(hciconfig $interface | sed -n '3 p' | cut -d' ' -f1 | xargs)
+    if [ "$status" == "DOWN" ]; then
+        hciconfig $interface up
+    fi
     while IFS='': read line; do
         mac=$(echo $line | cut -d' ' -f1)
         name=$(echo $line | cut -d' ' -f2-)
@@ -30,4 +34,4 @@ while IFS='': read interface_line; do
             echo " Failed to disconnect to $name"
         fi
     done < <(hcitool -i $interface scan | sed -n '1!p')
-done < <(hcitool dev | sed -n '1!p')
+done < <(hciconfig dev | grep Type)
