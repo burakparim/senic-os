@@ -24,6 +24,7 @@ while IFS='': read interface_line; do
             echo " Successfully established Bluetooth connection with $name"
         else
             echo " Failed to connect to $name"
+            continue
         fi
         echo `hcitool rssi $mac`
         # Disconnecting from the device
