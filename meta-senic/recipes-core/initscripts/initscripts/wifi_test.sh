@@ -43,12 +43,12 @@ if [ -n "$SSID_NAME" ]; then
             if [ "$updated_status" == "connected" ]; then
                 connection_name=$(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep $name | awk -F':' '{print $4}')
                 echo " Interface: $name is now connected to $SSID_NAME"
-                # logic to send data using interface
-                ping -q -I $name -c5 google.com > /dev/null
-                if [ $? -eq 0 ]; then
-                    echo " Successfully sent data using interface $name"
+                # logic to fetch data using interface
+                curl --interface $name https://www.senic.com/en/ > senic.html
+                if [ $(ls -l senic.html | cut -d ' ' -f5) -gt 0 ]; then
+                    echo " Successfully fetched html using interface $name"
                 else
-                    echo " Failed to send data using interface $name"
+                    echo " Failed to fetch data using interface $name"
                 fi
                 # nmcli command to close down a connection.
                 nmcli con down id "$connection_name"
