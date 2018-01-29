@@ -1,9 +1,17 @@
 #!/bin/bash
+# RESULTS: F indicates Failure, P being Pass.
+# Test Sequence :
+# * Finding connected BLE interface.
+# * Scanning for other devices.
+# * Being able to connect to available devices.
+# * Exchange data with connected device(device info).
+# * Disconnecting to connected device.
+
 BLE_DEVICES="$(hciconfig dev | grep Type | wc -l)"
 BLE_FOUND="F"
 if [ $BLE_DEVICES -gt 0 ]; then
     echo " $BLE_DEVICES Bluetooth device(s) found"
-    BLE_RESULTS="P"
+    BLE_FOUND="P"
 else
     echo " No Bluetooth device was found"
 fi
@@ -32,8 +40,10 @@ while IFS='': read interface_line; do
             echo " Failed to connect to $name"
             continue
         fi
-        echo `hcitool rssi $mac`
-        echo "$(hcitool info $mac)"
+        info=$(hcitool info $mac)
+        if [ "$(echo $info | grep "$mac" | wc -l)" -gt 0 ] && [ "$(echo $info | grep Features | wc -l)" -gt 0 ] ; then
+            CAN_TX_DATA="P"
+        fi
         # Disconnecting from the device
         hcitool -i $interface dc $mac 2>&1
         if [ "$(hcitool con | grep $mac | wc -l)" -eq 0 ]; then
