@@ -15,3 +15,5 @@ do_install_append() {
   install -m 0755 ${WORKDIR}/wifi_test.sh ${D}${bindir}/
 
 }
+
+RDEPENDS_${PN} +="bash"
