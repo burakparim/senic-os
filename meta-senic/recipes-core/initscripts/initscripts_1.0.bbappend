@@ -1,22 +1,17 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://update_motd.sh"
-SRC_URI += "file://networkmanager"
-
-# Tests needed only on debug release
-SRC_URI += "file://esd_test.sh"
+DEPENDS = "qrencode "
+SRC_URI += "file://hwtests.sh \
+        file://bluetooth_test.sh \
+        file://wifi_test.sh \
+        "
 
 do_install_append() {
 
-  # Install initscripts into /etc/init.d
-  install -m 0755 ${WORKDIR}/update_motd.sh ${D}${sysconfdir}/init.d/senic_update_motd
-  install -m 0755 ${WORKDIR}/networkmanager ${D}${sysconfdir}/init.d/networkmanager
+  # Install shell scripts into /usr/bin/
+  install -d ${D}${bindir}
+  install -m 0755 ${WORKDIR}/hwtests.sh ${D}${bindir}/
+  install -m 0755 ${WORKDIR}/bluetooth_test.sh ${D}${bindir}/
+  install -m 0755 ${WORKDIR}/wifi_test.sh ${D}${bindir}/
 
-  # Add initscripts to runlevel 5 (default)
-  update-rc.d -r ${D} senic_update_motd start 98 5 .
-  update-rc.d -r ${D} networkmanager start 91 5 .
-
-  # Tests needed only on debug release
-  # install -m 0755 ${WORKDIR}/esd_test.sh  ${D}${sysconfdir}/init.d/senic_esd_test
-  # update-rc.d -r ${D} senic_esd_test start 99 5 .
 }
