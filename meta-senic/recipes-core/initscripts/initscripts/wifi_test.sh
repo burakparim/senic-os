@@ -88,4 +88,4 @@ else
     echo " Please set SSID_NAME and SSID_PASSWORD environment variables"
 fi
 
-echo "w:$WIFI_HW_FOUND $WIFI_DRIVER $CAN_SCAN $CAN_CONNECT $CAN_TX_DATA $CAN_DISCONNECT"
+echo "w:$WIFI_HW_FOUND $WIFI_DRIVER $CAN_SCAN $CAN_CONNECT $CAN_TX_DATA $CAN_DISCONNECT" >> results.txt

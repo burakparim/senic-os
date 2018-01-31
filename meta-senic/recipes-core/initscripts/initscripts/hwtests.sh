@@ -9,7 +9,7 @@ echo 198 > /sys/class/gpio/export
 echo out > /sys/class/gpio/gpio198/direction
 echo 1 > /sys/class/gpio/gpio198/value
 LED_TEST="F"
-if [ "$(/sys/class/gpio/gpio198/value)" -eq 1 ]; then
+if [ "$(cat /sys/class/gpio/gpio198/value)" -eq 1 ]; then
     echo " LED switched on."
     LED_TEST="P"
 else
@@ -17,7 +17,7 @@ else
 fi
 
 echo 0 > /sys/class/gpio/gpio198/value
-if [ "$(/sys/class/gpio/gpio198/value)" -eq 0 ]; then
+if [ "$(cat /sys/class/gpio/gpio198/value)" -eq 0 ]; then
     echo " LED switched off."
 else
     echo " Failed to switch off LED."
