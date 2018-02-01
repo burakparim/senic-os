@@ -38,9 +38,11 @@ else
 fi
 
 echo "l:$LED_TEST" > results.txt
-   
-/bin/bash bluetooth_test.sh
-/bin/bash wifi_test.sh
+
+dir=$(dirname "$0")
+
+/bin/bash "$dir/bluetooth_test.sh"
+/bin/bash "$dir/wifi_test.sh"
 # qrencode -t ASCII -o code.txt < results.txt
 # cat code.txt
 cat results.txt

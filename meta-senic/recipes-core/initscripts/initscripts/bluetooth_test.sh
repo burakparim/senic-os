@@ -54,4 +54,4 @@ while IFS='': read interface_line; do
         fi
     done < <(hcitool -i $interface scan | sed -n '1!p')
 done < <(hciconfig dev | grep Type)
-echo "b:$BLE_FOUND $CAN_SCAN $CAN_CONNECT $CAN_TX_DATA $CAN_DISCONNECT"
+echo "b:$BLE_FOUND $CAN_SCAN $CAN_CONNECT $CAN_TX_DATA $CAN_DISCONNECT" >> results.txt
