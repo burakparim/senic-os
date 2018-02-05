@@ -63,10 +63,11 @@ if [ -n "$SSID_NAME" ]; then
                 connection_name=$(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep $name | awk -F':' '{print $4}')
                 echo " Interface: $name is now connected to $SSID_NAME"
                 # logic to fetch data using interface
-                curl --interface $name https://www.senic.com/en/ > senic.html
+                curl -s --interface $name https://www.senic.com/en/ -o senic.html
                 if [ $(ls -l senic.html | cut -d ' ' -f5) -gt 0 ]; then
                     echo " Successfully fetched html using interface $name"
                     CAN_TX_DATA="P"
+                    rm senic.html
                 else
                     echo " Failed to fetch data using interface $name"
                 fi
@@ -75,6 +76,7 @@ if [ -n "$SSID_NAME" ]; then
                 disconnect_status=$(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep $name | awk -F':' '{print $3}')
                 if [ "$disconnect_status" == "disconnected" ]; then
                     CAN_DISCONNECT="P"
+                    nmcli con delete "$connection_name"
                     echo " Closed connection for: $name"
                 else
                     echo " Failed to close connection for: $name"

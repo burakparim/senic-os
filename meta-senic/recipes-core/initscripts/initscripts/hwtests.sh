@@ -43,6 +43,5 @@ dir=$(dirname "$0")
 
 /bin/bash "$dir/bluetooth_test.sh"
 /bin/bash "$dir/wifi_test.sh"
-# qrencode -t ASCII -o code.txt < results.txt
-# cat code.txt
+cat /proc/cpuinfo | grep Serial | cut -d' ' -f2 | qrencode -t ASCII
 cat results.txt

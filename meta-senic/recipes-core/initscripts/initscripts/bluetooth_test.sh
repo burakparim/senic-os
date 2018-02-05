@@ -15,6 +15,10 @@ if [ $BLE_DEVICES -gt 0 ]; then
 else
     echo " No Bluetooth device was found"
 fi
+
+# Restarting BLE device service, it helped with BLE operations
+systemctl restart bluetooth
+
 CAN_SCAN="F"
 CAN_CONNECT="F"
 CAN_DISCONNECT="F"
@@ -42,6 +46,7 @@ while IFS='': read interface_line; do
         fi
         info=$(hcitool info $mac)
         if [ "$(echo $info | grep "$mac" | wc -l)" -gt 0 ] && [ "$(echo $info | grep Features | wc -l)" -gt 0 ] ; then
+            echo " Successfully enquired info for device: $name"
             CAN_TX_DATA="P"
         fi
         # Disconnecting from the device
