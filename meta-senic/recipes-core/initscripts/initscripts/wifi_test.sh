@@ -63,11 +63,11 @@ if [ -n "$SSID_NAME" ]; then
                 connection_name=$(nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep $name | awk -F':' '{print $4}')
                 echo " Interface: $name is now connected to $SSID_NAME"
                 # logic to fetch data using interface
-                curl -s --interface $name https://www.senic.com/en/ -o senic.html
-                if [ $(ls -l senic.html | cut -d ' ' -f5) -gt 0 ]; then
+                status_code=$(curl --interface $name --write-out %{http_code} --silent --output /dev/null https://www.senic.com/en/)
+                server_name=$(curl --interface $name -I -s https://www.senic.com/en/ | grep server | cut -d' ' -f2 | tr -d '[:space:]')
+                if [ $status_code -eq 200 ] && [ "$server_name" == "Netlify" ]; then
                     echo " Successfully fetched html using interface $name"
                     CAN_TX_DATA="P"
-                    rm senic.html
                 else
                     echo " Failed to fetch data using interface $name"
                 fi

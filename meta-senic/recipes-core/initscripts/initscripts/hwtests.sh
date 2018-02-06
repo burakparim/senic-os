@@ -17,25 +17,16 @@ if [ "$1" == "--h" ]; then
     exit 0
 fi
 
-# Test for LED
-echo 198 > /sys/class/gpio/export
-echo out > /sys/class/gpio/gpio198/direction
-echo 1 > /sys/class/gpio/gpio198/value
+# Test for LED, Manual prompt for now, given that GPIO6, being part of
+# device tree, is locked from userspace.
 LED_TEST="F"
-if [ "$(cat /sys/class/gpio/gpio198/value)" -eq 1 ]; then
-    echo " LED switched on."
-    LED_TEST="P"
-else
-    echo " Failed to switch on LED."
-fi
-
-echo 0 > /sys/class/gpio/gpio198/value
-if [ "$(cat /sys/class/gpio/gpio198/value)" -eq 0 ]; then
-    echo " LED switched off."
-else
-    echo " Failed to switch off LED."
-    LED_TEST="F"
-fi
+read -p "Is the status LED On? y/n: " -i "y" led_status
+case $led_status in
+    [Yy]* )
+        LED_TEST="P";;
+    * )
+        echo " Failed the LED test";;
+esac
 
 echo "l:$LED_TEST" > results.txt
 

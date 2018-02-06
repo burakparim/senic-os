@@ -18,7 +18,14 @@ fi
 
 # Restarting BLE device service, it helped with BLE operations
 systemctl restart bluetooth
+systemctl restart enable-bt-module
 
+echo
+echo -e "\033[1m************************************************************************\033[0m"
+echo -e "\033[1mPlease Make Sure you have Bluetooth enabled devices in vicinity.\033[0m"
+echo -e "\033[1mOr else following tests WILL FAIL despite possibly working BT module.\033[0m"
+echo -e "\033[1m************************************************************************\033[0m"
+echo
 CAN_SCAN="F"
 CAN_CONNECT="F"
 CAN_DISCONNECT="F"
