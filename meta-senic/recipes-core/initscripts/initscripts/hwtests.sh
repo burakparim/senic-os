@@ -20,13 +20,19 @@ fi
 # Test for LED, Manual prompt for now, given that GPIO6, being part of
 # device tree, is locked from userspace.
 LED_TEST="F"
-read -p "Is the status LED On? y/n: " -i "y" led_status
-case $led_status in
+while true; do
+    read -p "Is the status LED On? y/n: " led_status
+    case $led_status in
     [Yy]* )
-        LED_TEST="P";;
+        LED_TEST="P"
+        break;;
+    [Nn]* )
+        echo " Failed the LED test"
+        break;;
     * )
-        echo " Failed the LED test";;
-esac
+        echo " Please answer y/n.";;
+    esac
+done
 
 echo "l:$LED_TEST" > results.txt
 
