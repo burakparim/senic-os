@@ -1,6 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-DEPENDS = "qrencode "
 SRC_URI += "file://hwtests.sh \
     file://bluetooth_test.sh \
     file://wifi_test.sh \
@@ -15,3 +14,4 @@ do_install_append() {
 }
 
 RDEPENDS_${PN} +="bash"
+RDEPENDS_${PN} += "qrencode"
